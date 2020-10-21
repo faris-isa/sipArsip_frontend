@@ -14,6 +14,16 @@ export default [
   },
   {
     _tag: 'CSidebarNavTitle',
+    _children: ['Menu']
+  },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Products',
+    to: '/produk',
+    icon: 'cil-video',
+  },
+  {
+    _tag: 'CSidebarNavTitle',
     _children: ['Theme']
   },
   {
