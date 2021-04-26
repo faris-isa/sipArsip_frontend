@@ -1,81 +1,84 @@
 import React, { useState, useEffect } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
 import {
-  CBadge,
   CCard,
   CCardBody,
-  CCardHeader,
   CCol,
-  CDataTable,
   CRow,
-  CPagination
-} from '@coreui/react'
+} from '@coreui/react';
+import TableUsers from './components/TableUsers';
+import axiosConfig from "../../axios";
+import CardHeader from '../.components/CardHeader';
+import Swal from 'sweetalert2';
 
-import usersData from './UsersData'
-
-const getBadge = status => {
-  switch (status) {
-    case 'Active': return 'success'
-    case 'Inactive': return 'secondary'
-    case 'Pending': return 'warning'
-    case 'Banned': return 'danger'
-    default: return 'primary'
-  }
-}
 
 const Users = () => {
-  const history = useHistory()
-  const queryPage = useLocation().search.match(/page=([0-9]+)/, '')
-  const currentPage = Number(queryPage && queryPage[1] ? queryPage[1] : 1)
-  const [page, setPage] = useState(currentPage)
+  const [usersdata, setUsersdata] = useState([]);
+  const [load, setLoad] = useState(true);
 
-  const pageChange = newPage => {
-    currentPage !== newPage && history.push(`/users?page=${newPage}`)
+  const getUsers = async () => {
+    try {
+      const users = await axiosConfig.get('/users')
+      setUsersdata(users.data)
+      setLoad(false);
+    } catch(error) {
+
+    }
+  }
+
+  const handleDelete = (id) => {
+    const getAlert = () => {
+      Swal.fire({
+            title: 'Yakin menghapus pengguna ini ?',
+            text: "Perubahan yang terjadi tidak dapat diubah kembali",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, ini dihapus.'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              try {
+                setLoad(true);
+                axiosConfig.delete(`/users/${id}`)
+                .then(res => {
+                  if (res.status === 200){
+                    Swal.fire({
+                      title: 'Sukses',
+                      text: 'Data berhasil dihapus!',
+                      icon: 'success',
+                      timer: 2000,
+                    });
+                    let filtered = usersdata.reduce((filter,data) =>
+                    ( data.id !== id && filter.push(data) ,filter ),[]);
+                    setUsersdata(filtered);
+                    setLoad(false)
+                  }
+                })
+              } catch(error) {
+                console.log(error)
+              }
+            }
+          }
+          )
+      };
+          // setModal(true)
+          // getOffers();
+      getAlert();
+
   }
 
   useEffect(() => {
-    currentPage !== page && setPage(currentPage)
-  }, [currentPage, page])
+    getUsers()
+  }, []);
+
 
   return (
     <CRow>
-      <CCol xl={6}>
+      <CCol lg={12}>
         <CCard>
-          <CCardHeader>
-            Users
-            <small className="text-muted"> example</small>
-          </CCardHeader>
+          <CardHeader title="Daftar Pengguna" type="tambah" link="/pengguna/tambah"/>
           <CCardBody>
-          <CDataTable
-            items={usersData}
-            fields={[
-              { key: 'name', _classes: 'font-weight-bold' },
-              'registered', 'role', 'status'
-            ]}
-            hover
-            striped
-            itemsPerPage={5}
-            activePage={page}
-            clickableRows
-            onRowClick={(item) => history.push(`/users/${item.id}`)}
-            scopedSlots = {{
-              'status':
-                (item)=>(
-                  <td>
-                    <CBadge color={getBadge(item.status)}>
-                      {item.status}
-                    </CBadge>
-                  </td>
-                )
-            }}
-          />
-          <CPagination
-            activePage={page}
-            onActivePageChange={pageChange}
-            pages={5}
-            doubleArrows={false} 
-            align="center"
-          />
+          <TableUsers users={usersdata} load={load} del={handleDelete}/>
           </CCardBody>
         </CCard>
       </CCol>

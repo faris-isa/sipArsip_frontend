@@ -1,6 +1,7 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import {
+  CBadge,
   CCreateElement,
   CSidebar,
   CSidebarBrand,
@@ -11,8 +12,6 @@ import {
   CSidebarNavDropdown,
   CSidebarNavItem,
 } from '@coreui/react'
-
-import CIcon from '@coreui/icons-react'
 
 // sidebar nav config
 import navigation from './_nav'
@@ -27,16 +26,7 @@ const TheSidebar = () => {
       onShowChange={(val) => dispatch({type: 'set', sidebarShow: val })}
     >
       <CSidebarBrand className="d-md-down-none" to="/">
-        <CIcon
-          className="c-sidebar-brand-full"
-          name="logo-negative"
-          height={35}
-        />
-        <CIcon
-          className="c-sidebar-brand-minimized"
-          name="sygnet"
-          height={35}
-        />
+        <h2><b>SS</b><sup><CBadge color="warning" className="float-right">CCTV</CBadge></sup></h2>
       </CSidebarBrand>
       <CSidebarNav>
 

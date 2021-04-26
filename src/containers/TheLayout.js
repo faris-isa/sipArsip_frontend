@@ -7,12 +7,13 @@ import {
 } from './index'
 
 const TheLayout = () => {
+  const user = JSON.parse(sessionStorage.getItem("userData"));
 
   return (
     <div className="c-app c-default-layout">
-      <TheSidebar/>
+      <TheSidebar />
       <div className="c-wrapper">
-        <TheHeader/>
+        <TheHeader user={user}/>
         <div className="c-body">
           <TheContent/>
         </div>

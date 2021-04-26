@@ -1,6 +1,6 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react';
 import {
+  CAlert,
   CButton,
   CCard,
   CCardBody,
@@ -13,28 +13,96 @@ import {
   CInputGroupPrepend,
   CInputGroupText,
   CRow
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
+} from '@coreui/react';
+import CIcon from '@coreui/icons-react';
+import axiosConfig from "../../../axios";
+import ReactLoading from 'react-loading';
+import Swal from 'sweetalert2'
 
 const Login = () => {
+  const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  // const [akun, setAkun] = useState("");
+
+  const onSignInHandler = async () => {
+    setLoading(true);
+
+    let fd = {username, password};
+
+    try {
+      await axiosConfig.post('/user-login', fd)
+      .then(res => {
+        const data = res.data;
+        if (data.status === 200){
+          setLoading(false);
+          sessionStorage.setItem("isLoggedIn", true);
+          // localStorage.setItem("isLoggedIn", true);
+          sessionStorage.setItem("userData", JSON.stringify(data.data));
+          console.log(data.data)
+          Swal.fire({
+            title: 'Login Sukses',
+            text: 'Anda akan dialihkan dalam beberapa detik !',
+            icon: 'success',
+            timer: 1500,
+          });
+          window.location = '/';
+        } else if (data.status === 404){
+          setLoading(false);
+          Swal.fire({
+            title: 'Login Gagal',
+            text: "Periksa username/password !",
+            icon: 'error',
+            timer: 1500,
+          });
+        } else if (data.status === 400){
+          setLoading(false);
+          Swal.fire({
+            title: 'Login Gagal',
+            text: 'Masukkan kolom isian terlebih dahulu !',
+            icon: 'error',
+            timer: 1500,
+          });
+
+        }
+        setLoading(false);
+      })
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const divStyle = {
+    // backgroundColor: 'blue',
+    backgroundImage: 'url(https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fkintronics.com%2Fwp-content%2Fuploads%2F2014%2F09%2Fip-camera-surveillance-system.jpg&f=1&nofb=1)',
+    // backgroundImage: 'url(https://cdn.hipwallpaper.com/i/54/49/CKShQ1.jpg)',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: '100% 100%',
+    // opacity: '0.5'
+  };
+
   return (
-    <div className="c-app c-default-layout flex-row align-items-center">
+
+    <div className="c-app c-default-layout flex-row align-items-center" style={divStyle}>
       <CContainer>
         <CRow className="justify-content-center">
-          <CCol md="8">
+          <CCol md="4">
             <CCardGroup>
               <CCard className="p-4">
-                <CCardBody>
+                <CCardBody className="text-center">
+
+                {(loading === true) ?  <ReactLoading type={"spin"} color={"#000000"} height={'100%'} width={'100%'} /> :
                   <CForm>
-                    <h1>Login</h1>
-                    <p className="text-muted">Sign In to your account</p>
+                    <CAlert color="primary">username/password super_admin/12345678 admin/12345678</CAlert>
+                    <h1>Masuk</h1>
+                    {/* <p className="text-muted">Masukkan isian akun !</p> */}
                     <CInputGroup className="mb-3">
                       <CInputGroupPrepend>
                         <CInputGroupText>
                           <CIcon name="cil-user" />
                         </CInputGroupText>
                       </CInputGroupPrepend>
-                      <CInput type="text" placeholder="Username" autoComplete="username" />
+                      <CInput type="text" placeholder="Username. admin/lower" value={username} onChange={(e) => setUsername(e.target.value)} required />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
                       <CInputGroupPrepend>
@@ -42,29 +110,14 @@ const Login = () => {
                           <CIcon name="cil-lock-locked" />
                         </CInputGroupText>
                       </CInputGroupPrepend>
-                      <CInput type="password" placeholder="Password" autoComplete="current-password" />
+                      <CInput type="password" placeholder="Password. admin/lower" value={password} onChange={(e) => setPassword(e.target.value)} required />
                     </CInputGroup>
-                    <CRow>
-                      <CCol xs="6">
-                        <CButton color="primary" className="px-4">Login</CButton>
-                      </CCol>
-                      <CCol xs="6" className="text-right">
-                        <CButton color="link" className="px-0">Forgot password?</CButton>
-                      </CCol>
-                    </CRow>
+                    {/* <CRow> */}
+                        <CButton color="primary" className="px-4" onClick={onSignInHandler}>Login</CButton>
+                    {/* </CRow> */}
                   </CForm>
-                </CCardBody>
-              </CCard>
-              <CCard className="text-white bg-primary py-5 d-md-down-none" style={{ width: '44%' }}>
-                <CCardBody className="text-center">
-                  <div>
-                    <h2>Sign up</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
-                      labore et dolore magna aliqua.</p>
-                    <Link to="/register">
-                      <CButton color="primary" className="mt-3" active tabIndex={-1}>Register Now!</CButton>
-                    </Link>
-                  </div>
+                }
+
                 </CCardBody>
               </CCard>
             </CCardGroup>

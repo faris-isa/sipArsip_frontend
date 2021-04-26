@@ -6,8 +6,8 @@ import {
 
 const LabelForm = (props) => {
     return (
-        <CCol md={props.md}>
-            <CLabel htmlFor={props.htmlfor}>{props.name}</CLabel>
+        <CCol md={props.md} xs={props.xs}>
+            <CLabel htmlFor={props.htmlfor}><b>{props.name}</b></CLabel>
         </CCol>
     )
 }
