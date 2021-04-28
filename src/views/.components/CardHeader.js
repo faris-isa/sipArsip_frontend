@@ -4,7 +4,7 @@ import { CButton, CCardHeader, CCol, CRow } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 
 const CardHeader = (props) => {
-  const { title, type, link } = props;
+  const { title, type, link, print, handlePrint } = props;
 
 return (
   <CCardHeader>
@@ -15,18 +15,23 @@ return (
         <CCol md="4">
           { (type === "tambah") ?
             <Link to={link}>
-                <CButton color="primary" className="float-right">
+                <CButton color="primary" className="ml-1 float-right">
                     <CIcon name="cil-plus"/> Tambah
                 </CButton>
             </Link>
             : (type === "kembali") ?
             <Link to={link}>
-              <CButton color="primary" className="float-right">
+              <CButton color="primary" className="ml-1 float-right">
                 <CIcon name="cil-arrow-thick-left"/> Kembali
               </CButton>
             </Link>
             :
             <></>
+          }
+          {(print === true) ?
+              <CButton color="light" className="mr-1 float-right" onClick={handlePrint} >
+                <CIcon name="cil-cloud-download"/> Export
+              </CButton> : <></>
           }
                 {/* <CButton color="link" className="float-right" disabled>
                     <CIcon name="cil-cloud-upload"/> Import
