@@ -13,7 +13,7 @@ import {
 import CIcon from '@coreui/icons-react'
 
 import ChartBar from '../charts/MainChartExample'
-import axiosConfig from "../../axios";
+import axiosConfig from "../../api/axios";
 
 const WidgetsDropdown = lazy(() => import('../widgets/WidgetsDropdown.js'))
 
@@ -21,9 +21,7 @@ const Dashboard = () => {
   const FileDownload = require('js-file-download');
   const [countdata, setCountdata] = useState([]);
   const [tanggalan, setTanggalan] = useState([]);
-
-
-
+  const token = JSON.parse(sessionStorage.getItem("token"));
 
   // var d = new Date();
   // let year = d.getFullYear()
@@ -53,7 +51,10 @@ const Dashboard = () => {
     const getCount = async () => {
       const setDate = {tanggal: tanggal, bulan: month+1, tahun: year};
       try {
-        const count = await axiosConfig.post('/monthly', setDate)
+        let config = {
+          headers : { authorization: `Bearer ${token}` }
+        };
+        const count = await axiosConfig.get('/monthly', setDate, config)
         const temp = count.data;
         setCountdata(temp)
       } catch(error) {
@@ -67,7 +68,10 @@ const Dashboard = () => {
 
   const handleDownload = (event) => {
     try {
-      let headers = {responseType: 'blob' };
+      let headers = {
+        responseType: 'blob',
+        authorization: `Bearer ${token}`,
+      };
       axiosConfig.get(`/graphs/export`, headers)
       .then((res) => {
         FileDownload(res.data, `grafik.docx` );
