@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   CAlert,
   CButton,
@@ -15,7 +15,7 @@ import {
   CRow
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
-import axiosConfig from "../../../axios";
+import axios from '../../../api/axios';
 import ReactLoading from 'react-loading';
 import Swal from 'sweetalert2'
 
@@ -23,54 +23,56 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  // const [akun, setAkun] = useState("");
 
   const onSignInHandler = async () => {
     setLoading(true);
 
     let fd = {username, password};
 
-    try {
-      await axiosConfig.post('/user-login', fd)
-      .then(res => {
-        const data = res.data;
-        if (data.status === 200){
-          setLoading(false);
-          sessionStorage.setItem("isLoggedIn", true);
-          // localStorage.setItem("isLoggedIn", true);
-          sessionStorage.setItem("userData", JSON.stringify(data.data));
-          console.log(data.data)
-          Swal.fire({
-            title: 'Login Sukses',
-            text: 'Anda akan dialihkan dalam beberapa detik !',
-            icon: 'success',
-            timer: 1500,
-          });
-          window.location = '/';
-        } else if (data.status === 404){
-          setLoading(false);
-          Swal.fire({
-            title: 'Login Gagal',
-            text: "Periksa username/password !",
-            icon: 'error',
-            timer: 1500,
-          });
-        } else if (data.status === 400){
-          setLoading(false);
-          Swal.fire({
-            title: 'Login Gagal',
-            text: 'Masukkan kolom isian terlebih dahulu !',
-            icon: 'error',
-            timer: 1500,
-          });
+    axios.get('/csrf-cookie').then(res => {
+      // try {
+        axios.post('/login', fd)
+        .then(res => {
+          const data = res.data;
+          if (data.status === 201){
+            setLoading(false);
+            sessionStorage.setItem("isLoggedIn", true);
+            sessionStorage.setItem("userData", JSON.stringify(data.data));
+            sessionStorage.setItem("token", JSON.stringify(data.access_token));
+            Swal.fire({
+              title: 'Login Sukses',
+              text: 'Anda akan dialihkan dalam beberapa detik !',
+              icon: 'success',
+              timer: 1500,
+            });
+            window.location = '/';
+          } else if (data.status === 404){
+            setLoading(false);
+            Swal.fire({
+              title: 'Login Gagal',
+              text: "Periksa username/password !",
+              icon: 'error',
+              timer: 1500,
+            });
+          } else if (data.status === 400){
+            setLoading(false);
+            Swal.fire({
+              title: 'Login Gagal',
+              text: 'Masukkan kolom isian terlebih dahulu !',
+              icon: 'error',
+              timer: 1500,
+            });
 
-        }
-        setLoading(false);
-      })
-    } catch (error) {
-      console.error(error);
-    }
-  };
+          }
+          setLoading(false);
+        })
+      // })
+      // await axios.post('https://m3117063.api.isabot.site/api/user-login', fd)
+    // } catch (error) {
+    //   console.error(error);
+    // }
+  })
+}
 
   const divStyle = {
     // backgroundColor: 'blue',
