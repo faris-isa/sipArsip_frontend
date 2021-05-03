@@ -5,7 +5,7 @@ import {
   CCol,
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
-import axiosConfig from '../../axios';
+import axiosConfig from '../../api/axios';
 
 const WidgetsDropdown = () => {
 
@@ -13,16 +13,20 @@ const WidgetsDropdown = () => {
   const [countoff, setCountoff]=useState();
   const [offacc, setOffacc]=useState();
   const [offdec, setOffdec]=useState();
+  const token = JSON.parse(sessionStorage.getItem("token"));
+  let headers = {
+    authorization: `Bearer ${token}`,
+  };
 
 
   useEffect(() => {
-    axiosConfig.get('/products').then((res) => {
+    axiosConfig.get('/products', headers).then((res) => {
         const countProduct = res.data.length;
         return setCountprod(countProduct.toString());
     })
 }, [setCountprod])
   useEffect(() => {
-    axiosConfig.get('/offers').then((res) => {
+    axiosConfig.get('/offers', headers).then((res) => {
         const temp = res.data;
         const temp1 = temp.reduce((counter, obj) => {
           if(obj.status === "accept")counter += 1
@@ -32,7 +36,7 @@ const WidgetsDropdown = () => {
     })
 }, [setOffacc] )
   useEffect(() => {
-    axiosConfig.get('/offers').then((res) => {
+    axiosConfig.get('/offers', headers).then((res) => {
       const temp = res.data;
       const temp1 = temp.reduce((counter, obj) => {
         if(obj.status === "decline")counter += 1
@@ -42,7 +46,7 @@ const WidgetsDropdown = () => {
     })
 }, [setOffdec])
   useEffect(() => {
-    axiosConfig.get('/offers').then((res) => {
+    axiosConfig.get('/offers', headers).then((res) => {
       const countOffer = res.data.length;
       return setCountoff(countOffer.toString());
   })
