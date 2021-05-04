@@ -19,7 +19,7 @@ import {
 }  from './index'
 
 const TheHeader = (props) => {
-  const { user } = props;
+  const { user, logout } = props;
   const dispatch = useDispatch()
   const sidebarShow = useSelector(state => state.sidebarShow)
 
@@ -67,7 +67,7 @@ const TheHeader = (props) => {
         <TheHeaderDropdownTasks/>
         <TheHeaderDropdownMssg/> */}
         Hi, {user.name}
-        <TheHeaderDropdown user={user}/>
+        <TheHeaderDropdown user={user} logout={logout}/>
       </CHeaderNav>
 
       <CSubheader className="px-3 justify-content-between">

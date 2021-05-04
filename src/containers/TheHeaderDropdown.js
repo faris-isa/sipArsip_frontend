@@ -10,12 +10,12 @@ import CIcon from '@coreui/icons-react'
 
 
 const TheHeaderDropdown = (props) => {
-  const { user } = props;
+  const { user, logout } = props;
 
-  const handleLogOut = () => {
-    sessionStorage.clear();
-    window.location = '/';
-  }
+  // const handleLogOut = () => {
+  //   sessionStorage.clear();
+  //   window.location = '/';
+  // }
 
   return (
     <CDropdown
@@ -44,7 +44,7 @@ const TheHeaderDropdown = (props) => {
         {/* <CDropdownItem>
           <CIcon name="cil-user" className="mfe-2" />Profile
         </CDropdownItem> */}
-        <CDropdownItem onClick={(e) => {handleLogOut(e)}}>
+        <CDropdownItem onClick={(e) => {logout(e)}}>
           <CIcon name="cil-account-logout" className="mfe-2" />
           Log-out
         </CDropdownItem>
