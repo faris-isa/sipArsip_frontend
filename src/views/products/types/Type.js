@@ -43,16 +43,20 @@ const Type = ({match}) => {
         <Header title="Detail Tipe Produk" type="kembali" link="/produk/tipe"/>
     { (isload === true) ? <Loadwait /> :
         <CCardBody>
+          <table>
             {
               details.map(([key, value], index) => {
                 return (
-                  <tr key={index.toString()}>
-                    <td>{`${key}:`}</td>
-                    <td><strong>{value}</strong></td>
-                  </tr>
+                  <tbody  key={index.toString()}>
+                    <tr>
+                      <td>{`${key}:`}</td>
+                      <td><strong>{value}</strong></td>
+                    </tr>
+                  </tbody>
                 )
               })
             }
+            </table>
         </CCardBody>
     }
       </CCard>
