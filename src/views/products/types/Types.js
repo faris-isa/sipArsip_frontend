@@ -6,24 +6,24 @@ import {
   CRow,
 } from '@coreui/react';
 import Table from './components/Table';
-import axiosConfig from "../../api/axios";
+import axiosConfig from "../../../api/axios";
 import CardHeader from '../../.components/CardHeader'
 import Swal from 'sweetalert2';
 
 
 const Types = () => {
-  const [tipedata, setTipedata] = useState([]);
+  const [types, setTypes] = useState([]);
   const [load, setLoad] = useState(true);
   const token = JSON.parse(sessionStorage.getItem("token"));
-  let headers = {
-    authorization: `Bearer ${token}`,
-  };
 
   useEffect(() => {
+    let headers = {
+      authorization: `Bearer ${token}`,
+    };
     const getData = async () => {
       try {
         const types = await axiosConfig.get('/types', headers)
-        setTipedata(types.data);
+        setTypes(types.data);
         setLoad(false);
       } catch(error) {
 
@@ -31,9 +31,12 @@ const Types = () => {
     };
 
     getData()
-  }, [setTipedata]);
+  }, [setTypes]);
 
   const handleDelete = (id) => {
+    let headers = {
+      authorization: `Bearer ${token}`,
+    };
     const getAlert = () => {
       Swal.fire({
             title: 'Yakin menghapus tipe produk ini ?',
@@ -47,7 +50,7 @@ const Types = () => {
             if (result.isConfirmed) {
               try {
                 setLoad(true);
-                axiosConfig.delete(`/users/${id}`, headers)
+                axiosConfig.delete(`/types/${id}`, headers)
                 .then(res => {
                   if (res.status === 200){
                     Swal.fire({
@@ -56,9 +59,9 @@ const Types = () => {
                       icon: 'success',
                       timer: 2000,
                     });
-                    let filtered = usersdata.reduce((filter,data) =>
+                    let filtered = types.reduce((filter,data) =>
                     ( data.id !== id && filter.push(data) ,filter ),[]);
-                    setUsersdata(filtered);
+                    setTypes(filtered);
                     setLoad(false)
                   }
                 })
@@ -80,9 +83,9 @@ const Types = () => {
     <CRow>
       <CCol lg={12}>
         <CCard>
-          <CardHeader title="Daftar Tipe Produk" type="tambah" link="/tipe_produk/tambah"/>
+          <CardHeader title="Daftar Tipe Produk" type="tambah" link="/produk/tipe/tambah"/>
           <CCardBody>
-          <Table users={tipedata} load={load} del={handleDelete}/>
+          <Table types={types} load={load} del={handleDelete}/>
           </CCardBody>
         </CCard>
       </CCol>
