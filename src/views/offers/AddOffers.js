@@ -4,7 +4,7 @@ import { CCard } from '@coreui/react'
 
 import Form from './components/FormOffer';
 
-import axiosConfig from "../../axios";
+import axiosConfig from "../../api/axios";
 import Header from '../.components/CardHeader';
 
 

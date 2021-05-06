@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axiosConfig from "../../axios";
+import axiosConfig from "../../api/axios";
 import {
   CCard,
   CCardBody,
@@ -20,15 +20,20 @@ const Offer = ({match}) => {
     status: ""
   }]);
   const [isload, setIsload] = useState(true)
+  const token = JSON.parse(sessionStorage.getItem("token"));
 
 
   useEffect(() => {
     const getOffer = async () => {
+      let headers = {
+          authorization: `Bearer ${token}`,
+        };
       try {
-        const offer = await axiosConfig.get(`/offers/${id}`);
-        const data = offer.data;
-        setOfferdata(data);
-        setIsload(false);
+        await axiosConfig.get(`/offers/${id}`, headers)
+        .then((res) => {
+          setOfferdata(res.data);
+          setIsload(false);
+        })
       } catch(error) {
 
       }
@@ -40,7 +45,10 @@ const Offer = ({match}) => {
 
   const handleDownload = (id, nama_pembeli) => {
     try {
-      let headers = {responseType: 'blob' };
+      let headers = {
+        responseType: 'blob',
+        authorization: `Bearer ${token}`,
+      };
       axiosConfig.get(`/offers/export/${id}`, headers)
       .then((res) => {
         FileDownload(res.data, `${nama_pembeli}.docx` );

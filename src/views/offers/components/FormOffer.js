@@ -17,7 +17,7 @@ import {
 import CIcon from '@coreui/icons-react'
 import LabelForm from '../../.components/form/LabelForm';
 import Swal from 'sweetalert2';
-import axiosConfig from '../../../axios';
+import axiosConfig from '../../../api/axios';
 import Loadawait from '../../.components/Loading';
 import update from 'immutability-helper';
 
@@ -32,6 +32,10 @@ const FormOffer = (props) => {
   const [detail, setDetail] = useState([]);
   const history = useHistory();
   const [isloading, setIsloading] = useState(false);
+  const token = JSON.parse(sessionStorage.getItem("token"));
+  let headers = {
+      authorization: `Bearer ${token}`,
+    };
 
   useEffect(() => {
     sumSubTotal()
@@ -81,7 +85,7 @@ const FormOffer = (props) => {
     {key: 'option', _style: {width: '20%'}, filter: false },
     { key: 'model_produk', _style: { width: '40%'} },
     'harga_satuan',
-    'type_products'
+    'type_products',
   ];
 
   const handleSubmit = async (e) => {
@@ -91,7 +95,7 @@ const FormOffer = (props) => {
 
     const addOffer = {nama_pembeli: nama, harga_total: hargatotal, detail_produk: strdetail}
     try {
-      await axiosConfig.post('/offers', addOffer)
+      await axiosConfig.post('/offers', addOffer, headers)
       .then(res => {
         const data = res.data;
         if (data.status === 201){
@@ -205,7 +209,13 @@ const FormOffer = (props) => {
                           itemsPerPage={5}
                           pagination={{align:"end"}}
                           scopedSlots = {{
-                              'option' :
+                            'type_products'   :
+                              (item) =>(
+                                  <td>
+                                      {item.type.name} ({item.type.code_name})
+                                  </td>
+                              ),
+                            'option' :
                               (item) => (
                                   <td>
                                     <CButton color="primary" value={item.id} onClick={(e) => handleCheckboxProductChange(item.id)}>Pilih Produk !</CButton>

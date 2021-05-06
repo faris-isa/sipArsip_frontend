@@ -8,36 +8,39 @@ import {
 } from '@coreui/react';
 
 import Swal from 'sweetalert2';
-import axiosConfig from '../../axios';
+import axiosConfig from '../../api/axios';
 import TableStat from './components/TableStat';
+import { TheHeaderDropdownMssg } from 'src/containers';
 
 const OffersAcc = () => {
   const FileDownload = require('js-file-download');
   const [dataoff, setDataoff] = useState([]);
-  const [load, setLoad] = useState(true)
+  const [load, setLoad] = useState(true);
+  const token = JSON.parse(sessionStorage.getItem("token"));
+  let headers = {
+      authorization: `Bearer ${token}`,
+    };
 
-  const getOffers = async () => {
-    try {
-      const offers = await axiosConfig.get('/offers');
-      const temp = offers.data;
-      const not = temp.reduce((filter, value) => {
-        if (value.status === "not decided"){
-          const filtered =  value;
-          filter.push(filtered);
-        }
-        return filter
-      }, []);
-      setDataoff(not);
-      setLoad(false);
-    } catch(error) {
-
-    }
-  }
 
     useEffect(() => {
-      // if (load == true){
+      const getOffers = async () => {
+        try {
+          const offers = await axiosConfig.get('/offers', headers);
+          const temp = offers.data;
+          const not = temp.reduce((filter, value) => {
+            if (value.status === "not decided"){
+              const filtered =  value;
+              filter.push(filtered);
+            }
+            return filter
+          }, []);
+          setDataoff(not);
+          setLoad(false);
+        } catch(error) {
+
+        }
+      }
         getOffers();
-      // }
     }, [setDataoff]);
 
   const handleAcc = (id) => {
@@ -55,8 +58,9 @@ const OffersAcc = () => {
               setLoad(true);
               try {
                 const fd = {status: "accept", status_offpur:"pembelian"};
-                axiosConfig.patch(`/offers/status/${id}`, fd)
+                axiosConfig.post(`/offer-status/${id}`, fd, headers)
                 .then(res => {
+                  console.log(res);
                   const data = res.data;
                   if (data.status === 201){
                     Swal.fire({
@@ -107,7 +111,7 @@ const OffersAcc = () => {
               try {
                 setLoad(true);
                 const fd = {status: "decline", status_offpur: "selesai"};
-                axiosConfig.patch(`/offers/status/${id}`, fd)
+                axiosConfig.patch(`/offers/status/${id}`, fd, headers)
                 .then(res => {
                   const data = res.data;
                   if (data.status === 201){
@@ -145,7 +149,10 @@ const OffersAcc = () => {
 
       const handleDownload = (id, nama_pembeli) => {
           try {
-            let headers = {responseType: 'blob' };
+            let headers = {
+              responseType: 'blob',
+              authorization: `Bearer ${token}`,
+            };
             axiosConfig.get(`/offers/export/${id}`, headers)
             .then((res) => {
               FileDownload(res.data, `${nama_pembeli}.docx` );
