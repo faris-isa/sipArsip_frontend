@@ -10,7 +10,7 @@ import {
   CTabs,
 } from '@coreui/react';
 
-import axiosConfig from "../../axios";
+import axiosConfig from "../../api/axios";
 
 import CardHeader from '../.components/CardHeader';
 import TableProducts from './components/table/TableProducts';
@@ -24,10 +24,14 @@ const Products = () => {
   const [ongoingprod, setOngoingprod] = useState([]);
   const [depracatedprod, setDepracatedprod] = useState([]);
   const [load, setLoad] = useState(true);
+  const token = JSON.parse(sessionStorage.getItem("token"));
+  let headers = {
+    authorization: `Bearer ${token}`,
+  };
 
   const getProducts = async () => {
     try {
-      const products = await axiosConfig.get('/products');
+      const products = await axiosConfig.get('/products', headers);
       const data = products.data;
       //filter ongoing
       const ongoing = data.reduce((filter, value) => {
@@ -78,7 +82,7 @@ const Products = () => {
               try {
                 setLoad(true);
                 const fd = {"status": "deprecated"};
-                axiosConfig.patch(`/products/status/${id}`, fd)
+                axiosConfig.patch(`/products/status/${id}`, fd, headers)
                 .then(res => {
                   const data = res.data;
                   if (data.status === 201){
@@ -135,7 +139,7 @@ const Products = () => {
           try {
             setLoad(true);
             const fd = {"status": "ongoing"};
-            axiosConfig.patch(`/products/status/${id}`, fd)
+            axiosConfig.patch(`/products/status/${id}`, fd, headers)
             .then(res => {
               const data = res.data;
               if (data.status === 201){
