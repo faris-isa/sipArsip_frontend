@@ -2,15 +2,19 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
 import { CButton, CCard, CCardBody, CCardHeader, CCol, CRow } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import axiosConfig from '../../axios';
+import axiosConfig from '../../api/axios';
 
 const User = ({match}) => {
 
   const id = match.params.id;
   const [user, setUser] = useState();
+  const token = JSON.parse(sessionStorage.getItem("token"));
 
   useEffect(() => {
-    axiosConfig.get(`/users/${id}`).then((res) => {
+    let headers = {
+      authorization: `Bearer ${token}`,
+    };
+    axiosConfig.get(`/users/${id}`, headers).then((res) => {
         const data = res.data;
         setUser(data);
     })

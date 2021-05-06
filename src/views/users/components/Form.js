@@ -12,7 +12,7 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import LabelForm from '../../.components/form/LabelForm';
-import axiosConfig from '../../../axios';
+import axiosConfig from '../../../api/axios';
 import Loadwait from '../../.components/Loading';
 
 
@@ -24,6 +24,7 @@ const Form = () => {
   const [role, setRole] = useState('');
   const history = useHistory();
   const [isloading, setIsloading] = useState(false);
+  const token = JSON.parse(sessionStorage.getItem("token"));
 
   const options = [
     { label: "Masukkan Role User", value: 0},
@@ -33,10 +34,13 @@ const Form = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    let headers = {
+      authorization: `Bearer ${token}`,
+    };
     setIsloading(true);
     const addUserVal = {name, username, password, role};
     try {
-      await axiosConfig.post('/users', addUserVal)
+      await axiosConfig.post('/users', addUserVal, headers)
       .then(res => {
         const data = res.data;
         if (data.status === 201){

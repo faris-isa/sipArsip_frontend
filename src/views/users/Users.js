@@ -6,7 +6,7 @@ import {
   CRow,
 } from '@coreui/react';
 import TableUsers from './components/TableUsers';
-import axiosConfig from "../../axios";
+import axiosConfig from "../../api/axios";
 import CardHeader from '../.components/CardHeader';
 import Swal from 'sweetalert2';
 
@@ -14,12 +14,17 @@ import Swal from 'sweetalert2';
 const Users = () => {
   const [usersdata, setUsersdata] = useState([]);
   const [load, setLoad] = useState(true);
+  const token = JSON.parse(sessionStorage.getItem("token"));
 
   const getUsers = async () => {
+    let headers = {
+      authorization: `Bearer ${token}`,
+    };
     try {
-      const users = await axiosConfig.get('/users')
-      setUsersdata(users.data)
-      setLoad(false);
+      await axiosConfig.get('/users', headers).then((res) => {
+        setUsersdata(res.data)
+        setLoad(false);
+      })
     } catch(error) {
 
     }

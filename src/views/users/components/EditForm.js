@@ -12,7 +12,7 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import LabelForm from '../../.components/form/LabelForm';
-import axiosConfig from '../../../axios';
+import axiosConfig from '../../../api/axios';
 import Loadwait from '../../.components/Loading';
 
 
@@ -24,10 +24,14 @@ const EditForm = (props) => {
   const [username, setUsername] = useState('');
   const [role, setRole] = useState('');
   const [isloading, setIsloading] = useState(false);
+  const token = JSON.parse(sessionStorage.getItem("token"));
+  let headers = {
+    authorization: `Bearer ${token}`,
+  };
 
 
   useEffect(() => {
-    axiosConfig.get(`/users/${id}`).then((res) => {
+    axiosConfig.get(`/users/${id}`, headers).then((res) => {
         const data = res.data;
         setName(data.name);
         // setPassword(data.password);
@@ -47,7 +51,7 @@ const EditForm = (props) => {
     e.preventDefault();
     setIsloading(true);
     try {
-      await axiosConfig.patch(`/users/${id}`, addUserVal)
+      await axiosConfig.patch(`/users/${id}`, addUserVal, headers)
       .then(res =>{
         const data = res.data;
         if (data.status === 201){
