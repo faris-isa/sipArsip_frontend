@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { CCard, CCardBody, CForm, CButton } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
+import { CCard, CCardBody } from '@coreui/react'
 import axiosConfig from "../../../api/axios";
 import Form from './components/Form';
 import Header from '../../.components/CardHeader';
