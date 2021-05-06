@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
-import axiosConfig from "../../axios";
+import axiosConfig from "../../api/axios";
 
 import { CCard, CCardBody } from '@coreui/react';
 
 import Header from '../.components/CardHeader';
-import NvrDetail from './components/detail/NvrDetail';
-import IpcamDetail from './components/detail/IpcamDetail';
-import SwitchDetail from './components/detail/SwitchDetail';
+import Detail from './components/Detail';
 
 import Loadwait from '../.components/Loading';
 
@@ -16,37 +14,36 @@ const Product = ({match}) => {
 
   const id = match.params.id;
   const [isload, setIsload] = useState(true)
-  const [ productdata, setProductdata ] = useState({
-    type_products: ''
-  });
+  const [ data, setData ] = useState("");
+  const token = JSON.parse(sessionStorage.getItem("token"));
 
-  const getProduct = async () => {
-    try {
-      const product = await axiosConfig.get(`/products/${id}`);
-      setProductdata(product.data);
-      setIsload(false);
-    } catch(error) {
-
-    }
-  }
 
   useEffect(() => {
-    getProduct();
-  });
+    let headers = {
+      authorization: `Bearer ${token}`,
+    };
+    const getProduct = async () => {
+      try {
+        await axiosConfig.get(`/products/${id}`, headers).then((res) => {
+          setData(res.data);
+          setIsload(false);
+        })
+      } catch(error) {
 
+      }
+    }
+    getProduct();
+  }, [setData]);
 
   return (
     <>
       <CCard>
         <Header title="Produk Detail" type="kembali" link="/produk"/>
-    { (isload === true) ? <Loadwait /> :
         <CCardBody>
-          { (productdata.type_products === "nvr") ? <NvrDetail data={productdata} /> :
-          ( productdata.type_products === "ipcam") ? <IpcamDetail data={productdata}/> :
-          <SwitchDetail data={productdata} />
+          { (isload === true) ? <Loadwait /> :
+            <Detail data={data}/>
           }
         </CCardBody>
-    }
       </CCard>
     </>
   )
