@@ -1,43 +1,116 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { CCard, CCardBody } from '@coreui/react'
 
-
-import FormProducts from './components/FormProducts';
+import axiosConfig from "../../api/axios";
+import Load from '../.components/Loading';
+import Header from '../.components/CardHeader';
+import FormProducts from './components/Form';
 
 const AddProduct = () => {
-  let data = {
+  const [types, setTypes] = useState("");
+  const [manufactures, setManufactures] = useState("");
+  const [load, setLoad] = useState(true);
+  const [value, setValue] = useState("");
+  const token = JSON.parse(sessionStorage.getItem("token"));
+  let headers = {
+    authorization: `Bearer ${token}`,
+  };
+  const history = useHistory();
+
+  let temp = {
     model_produk: "",
-    deskripsi_produk: "",
+    product_type: "",
+    status: "ongoing",
     harga_satuan: "",
-    status: "",
-    foto_produk: "",
-
-    //nvr
-    in_bandwidth: "",
-    out_bandwidth: "",
-    channel_dicoding: "",
-    four_k_support: "",
-    sata_int: "",
-    net_port: "",
-    net_lenght: "",
-    dec_ch: "",
-    dec_pix: "",
-    e_sata: "",
-    poe_ports: "",
-    hdmi_out: "",
-
-    //ipcam
-    max_resolution: "",
-    form_factor: "",
-    protection: "",
-    lens_size: "",
-    lens_cam: "",
-    wdr: "120db",
-
-
+    detail : {
+      product_manufacture_id: 0,
+      spesifikasi: ""
+    }
   }
+
+  useEffect(() => {
+    const getManufactures = async () => {
+      try {
+        await axiosConfig.get('/manufactures', headers).then((res) => {
+          setManufactures(res.data);
+        })
+        await axiosConfig.get('/types', headers).then((res) => {
+          setTypes(res.data);
+          setLoad(false);
+        })
+      } catch(error) {
+
+      }
+    };
+
+    getManufactures();
+  }, [setManufactures, setTypes]);
+
+  const handleForm = (value) => {
+    setValue(value)
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoad(true);
+
+    const fd = new FormData();
+    fd.append('model_produk', value.model_produk);
+    fd.append('product_type', value.product_type);
+    fd.append('status', value.status);
+    fd.append('harga_satuan', value.harga_satuan);
+    fd.append('foto_produk', value.foto_produk);
+    fd.append('product_manufacture', value.product_manufacture);
+    fd.append('spesifikasi', value.spesifikasi);
+
+    try {
+      await axiosConfig.post('/products', fd, headers)
+      .then(res => {
+        const data = res.data;
+        if (data.status === 201){
+          setLoad(false);
+          Swal.fire({
+            title: 'Sukses',
+            text: 'Data berhasil ditambahksan!',
+            icon: 'success',
+            timer: 1500,
+          });
+          history.push('/produk');
+        } else if (data.status === 500){
+          setLoad(false);
+          Swal.fire({
+            title: 'Gagal',
+            text: 'Periksa kembali kolom form !',
+            icon: 'warning',
+            timer: 1500,
+          });
+        } else if (data.status === 404){
+          setLoad(false);
+          Swal.fire({
+            title: 'Gagal',
+            text: 'Error',
+            icon: 'error',
+            timer: 1500,
+          });
+        }
+      })
+    } catch {
+
+    }
+  }
+
     return (
         <>
-            <FormProducts data={data}/>
+          <CCard>
+            <Header title="Tambah Produk" type="kembali" link="/produk" />
+            <CCardBody>
+              { (load === true) ? <Load /> :
+                <FormProducts temp={temp} form={handleForm} type={types} manufacture={manufactures} submit={handleSubmit}/>
+              }
+            </CCardBody>
+          </CCard>
         </>
     )
 }

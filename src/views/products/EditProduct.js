@@ -1,80 +1,112 @@
 import React, { useState, useEffect } from 'react';
-import { CCard } from '@coreui/react'
+import { useHistory } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { CCard, CCardBody } from '@coreui/react'
 
-import axiosConfig from "../../axios";
-
-import FormEditProducts from './components/FormEditProducts';
+import axiosConfig from "../../api/axios";
+import Load from '../.components/Loading';
 import Header from '../.components/CardHeader';
-import Loadwait from '../.components/Loading';
-
+import FormProducts from './components/Form';
 
 const EditProduct = ({match}) => {
-
   const id = match.params.id;
-  const [productdata, setProductdata] = useState([]);
-  const [isloading, setIsloading] = useState(true);
+  const [types, setTypes] = useState("");
+  const [manufactures, setManufactures] = useState("");
+  const [load, setLoad] = useState(true);
+  const [value, setValue] = useState("");
+  const token = JSON.parse(sessionStorage.getItem("token"));
+  let headers = {
+    authorization: `Bearer ${token}`,
+  };
+  const history = useHistory();
 
-  const getProduct = async () => {
-    try {
-      const product = await axiosConfig.get(`/products/${id}`);
-      const res = product.data;
-      if (res.type_products === "nvr"){
-        const lens = res.network_int;
-        const splitted = lens.split(' - ');
-        const dec = res.channel_dicoding;
-        const splitted1 = dec.split(' - ');
-        const nvrVal = {...res,
-          net_port: splitted[0],
-          net_lenght: splitted[1],
-          dec_ch: splitted1[0],
-          dec_pix: splitted1[1],
-        };
-        setProductdata(nvrVal);
-        setIsloading(false)
-      } else if(res.type_products === "ipcam"){
-        const lens = res.lens;
-        const splitted = lens.split(' - ');
-        const size = splitted[0];
-        const arraySize = size.split(', ')
-        const ipVal = {...res,
-          lens_size: arraySize,
-          lens_cam: splitted[1],
-        };
-        setProductdata(ipVal);
-        setIsloading(false)
-      } else {
-        setProductdata(res);
-        setIsloading(false)
+  const [temp, setTemp] = useState("")
+
+  useEffect(() => {
+    const getManufactures = async () => {
+      try {
+        await axiosConfig.get('/manufactures', headers).then((res) => {
+          setManufactures(res.data);
+        })
+        await axiosConfig.get('/types', headers).then((res) => {
+          setTypes(res.data);
+        })
+        await axiosConfig.get(`/products/${id}`, headers).then((res) => {
+          setTemp(res.data);
+          setLoad(false);
+        })
+      } catch(error) {
 
       }
-    } catch(error) {
+    };
+
+    getManufactures();
+  }, [setManufactures, setTypes]);
+
+  const handleForm = (value) => {
+    setValue(value)
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoad(true);
+
+    const fd = new FormData();
+    fd.append('model_produk', value.model_produk);
+    fd.append('product_type', value.product_type);
+    fd.append('status', value.status);
+    fd.append('harga_satuan', value.harga_satuan);
+    fd.append('foto_produk', value.foto_produk);
+    fd.append('product_manufacture', value.product_manufacture);
+    fd.append('spesifikasi', value.spesifikasi);
+
+    try {
+      await axiosConfig.post(`/products/${id}?_method=PATCH`, fd, headers)
+      // await axiosConfig.patch(`/products/${id}`, fd, headers)
+      .then(res => {
+        const data = res.data;
+        if (data.status === 201){
+          setLoad(false);
+          Swal.fire({
+            title: 'Sukses',
+            text: 'Data berhasil ditambahksan!',
+            icon: 'success',
+            timer: 1500,
+          });
+          history.push('/produk');
+        } else if (data.status === 500){
+          setLoad(false);
+          Swal.fire({
+            title: 'Gagal',
+            text: 'Periksa kembali kolom form !',
+            icon: 'warning',
+            timer: 1500,
+          });
+        } else if (data.status === 404){
+          setLoad(false);
+          Swal.fire({
+            title: 'Gagal',
+            text: 'Error',
+            icon: 'error',
+            timer: 1500,
+          });
+        }
+      })
+    } catch {
 
     }
   }
 
-  // if (productdata.type_products === "nvr"){
-  //   const lens = productdata.network_int;
-  //   const splitted = lens.split(' - ');
-  //   const temp = {...productdata, dec_ch: splitted[0]};
-  //   setProductdata(temp);
-  //   const temp1 = {...productdata, dec_pix: splitted[1]};
-  //   setProductdata(temp1);
-
-  // }
-
-  useEffect(() => {
-    getProduct()
-  });
-
-
     return (
         <>
-        <CCard>
-          <Header title="Edit Produk" type="kembali" link="/produk"/>
-          {
-            (isloading === true) ? <Loadwait /> : <FormEditProducts data={productdata} id={id}/>
-          }
-        </CCard>
+          <CCard>
+            <Header title="Tambah Produk" type="kembali" link="/produk" />
+            <CCardBody>
+              { (load === true) ? <Load /> :
+                <FormProducts temp={temp} form={handleForm} type={types} manufacture={manufactures} submit={handleSubmit}/>
+              }
+            </CCardBody>
+          </CCard>
         </>
     )
 }
