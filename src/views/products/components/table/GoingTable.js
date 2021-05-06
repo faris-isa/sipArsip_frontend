@@ -10,8 +10,8 @@ const fields = [
     // {key: 'id', _style: {width: '5%'} },
     { key: 'model_produk', _style: { width: '40%'} },
     // { key: 'status', _style: { width: '10%'} },
-    { key: 'type_products', _style: { width: '15%'}, label: "Tipe Produk" },
-    { key: 'harga_satuan', _style: { width: '20%'}, label:"Harga" },
+    { key: 'type_products', _style: { width: '25%'}, label: "Tipe Produk" },
+    { key: 'harga_satuan', _style: { width: '15%'}, label:"Harga" },
     {key:'action', sorter: false },
 ];
 
@@ -30,6 +30,12 @@ const GoingTable = (props) => {
             itemsPerPage={10}
             pagination={{align:"end"}}
             scopedSlots = {{
+              'type_products'   :
+              (item) =>(
+                  <td>
+                      {item.type.name}({item.type.code_name})
+                  </td>
+              ),
                 'harga_satuan'   :
                 (item) =>(
                     <td>
