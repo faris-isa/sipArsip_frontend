@@ -54,9 +54,9 @@ const Dashboard = () => {
         let config = {
           headers : { authorization: `Bearer ${token}` }
         };
-        const count = await axiosConfig.get('/monthly', setDate, config)
-        const temp = count.data;
-        setCountdata(temp)
+        await axiosConfig.post('/monthly', setDate, config).then((res) => {
+          setCountdata(res.data)
+        })
       } catch(error) {
 
       }
