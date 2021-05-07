@@ -4,40 +4,37 @@ import {
   CCardBody,
 } from '@coreui/react';
 
-import axiosConfig from "../../axios";
+import axiosConfig from "../../api/axios";
 
 import CardHeader from '../.components/CardHeader';
 import Table from './component/Table';
-// import TableProducts from './components/table/TableProducts';
-// import OngoingTable from './components/table/GoingTable';
-// import DepracatedTable from './components/table/DepracateTable';
-
-// import Swal from 'sweetalert2'
 
 const Serials = () => {
-  const [serials, setSerials] = useState([{
-      tanggal_beli: "",
-      tanggal_selesai:""
-  }]);
+  const [serials, setSerials] = useState();
   const [load, setLoad] = useState(true);
+  const token = JSON.parse(sessionStorage.getItem("token"));
+  let headers = {
+    authorization: `Bearer ${token}`,
+  };
 
-  const getSerials = async () => {
-    try {
-      const serials = await axiosConfig.get('/serials');
-
-      setSerials(serials.data)
-      setLoad(false);
-
-    } catch(error) {
-
-    }
-  }
 
   useEffect(() => {
+    const getSerials = async () => {
+      try {
+        await axiosConfig.get('/serials', headers)
+        .then((res) => {
+          setSerials(res.data)
+          setLoad(false);
+        })
+
+      } catch(error) {
+
+      }
+    }
+
     getSerials();
-    // getGoingProducts();
-    // getDepProducts();
-  }, []);
+
+  }, [setSerials]);
 
   return (
     <>

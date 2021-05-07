@@ -37,16 +37,16 @@ const Table = (props) => {
         <CDataTable
             items={serials}
             fields={fields}
+            loading={load}
             striped
             columnFilter
-            loading = {load}
             itemsPerPage={10}
             pagination={{align:"end"}}
             scopedSlots = {{
-                'harga_satuan'   :
+                'lokasi'   :
                 (item) =>(
                     <td>
-                        {/* Rp. {item.harga_satuan},00 */}
+                        {item.location.name}
                     </td>
                 ),
                 // 'sisa':
