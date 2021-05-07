@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axiosConfig from "../../axios";
+import axiosConfig from "../../api/axios";
 import {
   CCard,
   CCardBody,
@@ -39,25 +39,25 @@ const Purchase = ({match}) => {
       }
     }]
   });
-  const [isload, setIsload] = useState(true)
-
-  const getPurchase = async () => {
-    try {
-      const purchases = await axiosConfig.get(`/purchases/${id}`);
-      setPurchasedata(purchases.data);
-      setIsload(false)
-    } catch(error) {
-
-    }
-  }
+  const [isload, setIsload] = useState(true);
+  const token = JSON.parse(sessionStorage.getItem("token"));
+  let headers = {
+    authorization: `Bearer ${token}`,
+  };
 
   useEffect(() => {
+    const getPurchase = async () => {
+      try {
+        await axiosConfig.get(`/purchases/${id}`, headers).then((res) => {
+          setPurchasedata(res.data);
+          setIsload(false)
+        })
+      } catch(error) {
+
+      }
+    }
     getPurchase()
-  });
-
-  // const offerDetails = offerdata ? Object.entries(offerdata) :
-  // [['id', (<span> Loading ....</span>)]]
-
+  }, [setPurchasedata]);
 
   return (
     <>

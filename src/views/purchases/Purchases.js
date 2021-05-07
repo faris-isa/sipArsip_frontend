@@ -4,7 +4,7 @@ import {
   CCardBody,
 } from '@coreui/react';
 
-import axiosConfig from "../../axios";
+import axiosConfig from "../../api/axios";
 
 import CardHeader from '../.components/CardHeader';
 import TableOffers from './components/ListTable';
@@ -12,23 +12,22 @@ import TableOffers from './components/ListTable';
 const Purchases = () => {
   const [data, setData] = useState([]);
   const [load, setLoad] = useState(true);
-
-
-
-  const getPurchases = async () => {
-    try {
-      const purchase = await axiosConfig.get('/purchases')
-      const temp = purchase.data;
-      setData(temp);
-      setLoad(false);
-    } catch(error) {
-
-    }
-  }
-
-  // console.log(data)
+  const token = JSON.parse(sessionStorage.getItem("token"));
+  let headers = {
+    authorization: `Bearer ${token}`,
+  };
 
   useEffect(() => {
+    const getPurchases = async () => {
+      try {
+        await axiosConfig.get('/purchases', headers).then((res) => {
+          setData(res.data);
+          setLoad(false);
+        })
+      } catch(error) {
+
+      }
+    }
     getPurchases();
   }, [setData]);
 

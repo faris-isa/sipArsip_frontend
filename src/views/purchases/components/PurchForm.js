@@ -16,7 +16,7 @@ import update from 'immutability-helper';
 
 const PurchForm = (props) => {
 
-  const { data, serialadd, form, handleradd, handlersubmit } = props;
+  const { data, location, serialadd, form, handleradd, handlersubmit } = props;
 
   const detailnya = data.detail;
   // const [adddetail, setAdddetail] = useState(serialadd);
@@ -148,9 +148,11 @@ const handleAddSerial = (e) => {
           <CCol xs="12" md="4">
             <CFormGroup>
               <CSelect custom name="lokasi" id="lokasi" value={item.lokasi} onChange={handleChange(index)}>
-                <option value="Gudang Ancol">Gudang Ancol</option>
-                <option value="Gudang Miami">Gudang Miami</option>
-                <option value="Gudang Mangga Dua">Gudang Mangga Dua</option>
+              <option value="0">--- Pilih Gudang Asal Produk ---</option>
+                    {
+                    location.map((f, i) =>
+                    <option key={i} value={f.id}>{f.name}</option> )
+                    }
               </CSelect>
             </CFormGroup>
           </CCol>

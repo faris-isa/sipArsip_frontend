@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import axiosConfig from "../../axios";
+import axiosConfig from "../../api/axios";
 import { CCard, CCardBody } from '@coreui/react';
 import Swal from 'sweetalert2';
 
 import Form from './components/PurchForm';
 import Header from '../.components/CardHeader';
 import Loadawait from '../.components/Loading';
+import { reset } from 'enzyme/build/configuration';
 
 
 const RegPurchase = ({match}) => {
@@ -21,24 +22,33 @@ const RegPurchase = ({match}) => {
       status: ""
     }]
   });
+  const [location, setLocation] = useState();
   const [addserial, setAddserial] = useState(true);
   const [form, setForm] = useState([]);
   const [isloading, setIsloading] = useState(true);
+  const token = JSON.parse(sessionStorage.getItem("token"));
+  let headers = {
+    authorization: `Bearer ${token}`,
+  };
 
   useEffect(() => {
     const getPurchase = async () => {
       try {
-        const purchase = await axiosConfig.get(`/offers/${id}`);
-        setAddserial(false);
-        setIsloading(false);
-        setPurchdata(purchase.data);
+        await axiosConfig.get(`/offers/${id}`, headers).then((res) => {
+          setPurchdata(res.data);
+        })
+        await axiosConfig.get(`/locations`, headers).then((res) => {
+          setLocation(res.data);
+          setAddserial(false);
+          setIsloading(false);
+        })
       } catch(error) {
 
       }
     }
 
     getPurchase()
-  }, [setPurchdata]);
+  }, [setPurchdata, setLocation]);
 
 
   const handleAdd = (value) => {
@@ -54,14 +64,10 @@ const RegPurchase = ({match}) => {
     setIsloading(true);
 
     const strdetail = JSON.stringify(form)
-    // console.log(form);
-
     const addPurchase = {purchase_id: purchdata.purchase[0].id, purchase_detail: strdetail}
 
-    console.log(addPurchase);
-
     try {
-      await axiosConfig.post('/purchases', addPurchase)
+      await axiosConfig.post('/purchases', addPurchase, headers)
       .then(res => {
         const data = res.data;
         if (data.status === 201){
@@ -113,7 +119,7 @@ const RegPurchase = ({match}) => {
         <Header title="Pendaftaran Pembelian" type="kembali" link="/pembelian/daftar"/>
         <CCardBody>
         {(isloading === true)  ? <Loadawait /> :
-          <Form data={purchdata} serialadd={addserial} form={addForm} handleradd={handleAdd} handlersubmit={handleSubmit}/>
+          <Form data={purchdata} location={location} serialadd={addserial} form={addForm} handleradd={handleAdd} handlersubmit={handleSubmit}/>
         }
         </CCardBody>
       </CCard>

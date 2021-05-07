@@ -10,7 +10,7 @@ import {
   CCardBody,
 } from '@coreui/react';
 
-import axiosConfig from "../../axios";
+import axiosConfig from "../../api/axios";
 
 import TablePurch from './components/RegTable';
 import Header from '../.components/CardHeader';
@@ -18,29 +18,32 @@ import Header from '../.components/CardHeader';
 const ListRegPurchases = () => {
   const [data, setData] = useState([]);
   const [load, setLoad] = useState(true);
-
-
-
-  const getPur = async () => {
-    try {
-      const offpurs = await axiosConfig.get('/purchases')
-      const temp = offpurs.data;
-      const belum = temp.reduce((filter, value) => {
-        if (value.status === "belum") {
-          const filtered = value;
-          filter.push(filtered);
-        }
-        return filter;
-      }, []);
-      setData(belum);
-      // setData(temp);
-      setLoad(false);
-    } catch(error) {
-
-    }
-  }
+  const token = JSON.parse(sessionStorage.getItem("token"));
+  let headers = {
+    authorization: `Bearer ${token}`,
+  };
 
   useEffect(() => {
+    const getPur = async () => {
+      try {
+        await axiosConfig.get('/purchases', headers).then((res) => {
+          const temp = res.data;
+          const belum = temp.reduce((filter, value) => {
+            if (value.status === "belum") {
+              const filtered = value;
+              filter.push(filtered);
+            }
+            return filter;
+          }, []);
+          setData(belum);
+          // setData(temp);
+          setLoad(false);
+        })
+      } catch(error) {
+
+      }
+    }
+
     getPur();
   }, [setData]);
 
