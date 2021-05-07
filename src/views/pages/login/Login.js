@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-  CAlert,
+  // CAlert,
   CButton,
   CCard,
   CCardBody,
@@ -95,7 +95,7 @@ const Login = () => {
 
                 {(loading === true) ?  <ReactLoading type={"spin"} color={"#000000"} height={'100%'} width={'100%'} /> :
                   <CForm>
-                    <CAlert color="primary">username/password super_admin/12345678 admin/12345678</CAlert>
+                    {/* <CAlert color="primary">username/password super_admin/12345678 admin/12345678</CAlert> */}
                     <h1>Masuk</h1>
                     {/* <p className="text-muted">Masukkan isian akun !</p> */}
                     <CInputGroup className="mb-3">
