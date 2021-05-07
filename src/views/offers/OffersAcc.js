@@ -60,7 +60,6 @@ const OffersAcc = () => {
                 const fd = {status: "accept", status_offpur:"pembelian"};
                 axiosConfig.post(`/offer-status/${id}`, fd, headers)
                 .then(res => {
-                  console.log(res);
                   const data = res.data;
                   if (data.status === 201){
                     Swal.fire({

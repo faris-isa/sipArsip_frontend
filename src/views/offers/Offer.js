@@ -58,8 +58,6 @@ const Offer = ({match}) => {
     }
   }
 
-  console.log(offerdata);
-
   return (
     <>
       <CCard>
