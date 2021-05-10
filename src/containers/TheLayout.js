@@ -10,16 +10,19 @@ import axios from '../../src/api/axios';
 const TheLayout = () => {
   const user = JSON.parse(sessionStorage.getItem("userData"));
   const token = JSON.parse(sessionStorage.getItem("token"));
-  let headers = {
-    authorization: `Bearer ${token}`,
+  let config = {
+    headers : { Authorization: `Bearer ${token}` }
   };
 
   const handleLogOut = () => {
     try {
-      axios.post(`/logout`, headers)
+      axios.get(`/logout`, config)
       .then(res => {
-        sessionStorage.clear();
-        window.location = '/';
+        if (res.data.status === 200){
+          sessionStorage.clear();
+          window.location = '/';
+          sessionStorage.setItem("isLoggedIn", false);
+        }
       })
     } catch(error) {
       console.log(error)
