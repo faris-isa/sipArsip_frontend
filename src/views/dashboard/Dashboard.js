@@ -68,8 +68,9 @@ const Dashboard = () => {
 
   const handleDownload = (event) => {
     try {
-      let config = { headers : {
+      let config = {
         responseType: 'blob',
+        headers : {
         Authorization: `Bearer ${token}`,
       }};
       axiosConfig.get(`/graphs/export`, config)

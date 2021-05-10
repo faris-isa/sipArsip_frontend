@@ -45,8 +45,9 @@ const Offer = ({match}) => {
 
   const handleDownload = (id, nama_pembeli) => {
     try {
-      let config = { headers : {
+      let config = {
         responseType: 'blob',
+        headers : {
         Authorization: `Bearer ${token}`,
       }};
       axiosConfig.get(`/offers/export/${id}`, config)
