@@ -19,12 +19,12 @@ const Product = ({match}) => {
 
 
   useEffect(() => {
-    let headers = {
-      authorization: `Bearer ${token}`,
+    let config = {
+      headers : { Authorization: `Bearer ${token}` }
     };
     const getProduct = async () => {
       try {
-        await axiosConfig.get(`/products/${id}`, headers).then((res) => {
+        await axiosConfig.get(`/products/${id}`, config).then((res) => {
           setData(res.data);
           setIsload(false);
         })

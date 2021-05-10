@@ -17,15 +17,15 @@ const OffersAcc = () => {
   const [dataoff, setDataoff] = useState([]);
   const [load, setLoad] = useState(true);
   const token = JSON.parse(sessionStorage.getItem("token"));
-  let headers = {
-      authorization: `Bearer ${token}`,
-    };
+  let config = {
+    headers : { Authorization: `Bearer ${token}` }
+  };
 
 
     useEffect(() => {
       const getOffers = async () => {
         try {
-          const offers = await axiosConfig.get('/offers', headers);
+          const offers = await axiosConfig.get('/offers', config);
           const temp = offers.data;
           const not = temp.reduce((filter, value) => {
             if (value.status === "not decided"){
@@ -58,7 +58,7 @@ const OffersAcc = () => {
               setLoad(true);
               try {
                 const fd = {status: "accept", status_offpur:"pembelian"};
-                axiosConfig.post(`/offer-status/${id}`, fd, headers)
+                axiosConfig.post(`/offer-status/${id}`, fd, config)
                 .then(res => {
                   const data = res.data;
                   if (data.status === 201){
@@ -110,7 +110,7 @@ const OffersAcc = () => {
               try {
                 setLoad(true);
                 const fd = {status: "decline", status_offpur: "selesai"};
-                axiosConfig.patch(`/offers/status/${id}`, fd, headers)
+                axiosConfig.patch(`/offers/status/${id}`, fd, config)
                 .then(res => {
                   const data = res.data;
                   if (data.status === 201){
@@ -148,11 +148,11 @@ const OffersAcc = () => {
 
       const handleDownload = (id, nama_pembeli) => {
           try {
-            let headers = {
+            let config = { headers : {
               responseType: 'blob',
-              authorization: `Bearer ${token}`,
-            };
-            axiosConfig.get(`/offers/export/${id}`, headers)
+              Authorization: `Bearer ${token}`,
+            }};
+            axiosConfig.get(`/offers/export/${id}`, config)
             .then((res) => {
               FileDownload(res.data, `${nama_pembeli}.docx` );
             });

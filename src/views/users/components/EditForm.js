@@ -25,13 +25,13 @@ const EditForm = (props) => {
   const [role, setRole] = useState('');
   const [isloading, setIsloading] = useState(false);
   const token = JSON.parse(sessionStorage.getItem("token"));
-  let headers = {
-    authorization: `Bearer ${token}`,
+  let config = {
+    headers : { Authorization: `Bearer ${token}` }
   };
 
 
   useEffect(() => {
-    axiosConfig.get(`/users/${id}`, headers).then((res) => {
+    axiosConfig.get(`/users/${id}`, config).then((res) => {
         const data = res.data;
         setName(data.name);
         // setPassword(data.password);
@@ -51,7 +51,7 @@ const EditForm = (props) => {
     e.preventDefault();
     setIsloading(true);
     try {
-      await axiosConfig.patch(`/users/${id}`, addUserVal, headers)
+      await axiosConfig.patch(`/users/${id}`, addUserVal, config)
       .then(res =>{
         const data = res.data;
         if (data.status === 201){

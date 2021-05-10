@@ -17,12 +17,12 @@ const Types = () => {
   const token = JSON.parse(sessionStorage.getItem("token"));
 
   useEffect(() => {
-    let headers = {
-      authorization: `Bearer ${token}`,
+    let config = {
+      headers : { Authorization: `Bearer ${token}` }
     };
     const getData = async () => {
       try {
-        const types = await axiosConfig.get('/types', headers)
+        const types = await axiosConfig.get('/types', config)
         setTypes(types.data);
         setLoad(false);
       } catch(error) {
@@ -34,8 +34,8 @@ const Types = () => {
   }, [setTypes]);
 
   const handleDelete = (id) => {
-    let headers = {
-      authorization: `Bearer ${token}`,
+    let config = {
+      headers : { Authorization: `Bearer ${token}` }
     };
     const getAlert = () => {
       Swal.fire({
@@ -50,7 +50,7 @@ const Types = () => {
             if (result.isConfirmed) {
               try {
                 setLoad(true);
-                axiosConfig.delete(`/types/${id}`, headers)
+                axiosConfig.delete(`/types/${id}`, config)
                 .then(res => {
                   if (res.status === 200){
                     Swal.fire({

@@ -14,43 +14,69 @@ const WidgetsDropdown = () => {
   const [offacc, setOffacc]=useState();
   const [offdec, setOffdec]=useState();
   const token = JSON.parse(sessionStorage.getItem("token"));
-  let headers = {
-    authorization: `Bearer ${token}`,
+  let config = {
+    headers : { Authorization: `Bearer ${token}` }
   };
 
-
   useEffect(() => {
-    axiosConfig.get('/products', headers).then((res) => {
+    axiosConfig.get('/products', config).then((res) => {
         const countProduct = res.data.length;
         return setCountprod(countProduct.toString());
     })
-}, [setCountprod])
-  useEffect(() => {
-    axiosConfig.get('/offers', headers).then((res) => {
-        const temp = res.data;
-        const temp1 = temp.reduce((counter, obj) => {
-          if(obj.status === "accept")counter += 1
-          return counter;
-        }, 0)
-        return setOffacc(temp1.toString());
-    })
-}, [setOffacc] )
-  useEffect(() => {
-    axiosConfig.get('/offers', headers).then((res) => {
+    axiosConfig.get('/offers', config).then((res) => {
       const temp = res.data;
       const temp1 = temp.reduce((counter, obj) => {
+        if(obj.status === "accept")counter += 1
+        return counter;
+      }, 0)
+      setOffacc(temp1.toString());
+      const temp2 = temp.reduce((counter, obj) => {
         if(obj.status === "decline")counter += 1
         return counter;
       }, 0)
-      return setOffdec(temp1.toString());
-    })
-}, [setOffdec])
-  useEffect(() => {
-    axiosConfig.get('/offers', headers).then((res) => {
+      setOffdec(temp2.toString());
       const countOffer = res.data.length;
       return setCountoff(countOffer.toString());
   })
-}, [setCountoff])
+//   axiosConfig.get('/offers', headers).then((res) => {
+//     const temp = res.data;
+//     const temp1 = temp.reduce((counter, obj) => {
+//       if(obj.status === "decline")counter += 1
+//       return counter;
+//     }, 0)
+//     return setOffdec(temp1.toString());
+//   })
+//   axiosConfig.get('/offers', headers).then((res) => {
+//     const countOffer = res.data.length;
+//     return setCountoff(countOffer.toString());
+// })
+}, [setCountprod, setOffacc, setOffdec, setCountoff])
+//   useEffect(() => {
+//     axiosConfig.get('/offers', null, headers).then((res) => {
+//         const temp = res.data;
+//         const temp1 = temp.reduce((counter, obj) => {
+//           if(obj.status === "accept")counter += 1
+//           return counter;
+//         }, 0)
+//         return setOffacc(temp1.toString());
+//     })
+// }, [setOffacc] )
+//   useEffect(() => {
+//     axiosConfig.get('/offers', headers).then((res) => {
+//       const temp = res.data;
+//       const temp1 = temp.reduce((counter, obj) => {
+//         if(obj.status === "decline")counter += 1
+//         return counter;
+//       }, 0)
+//       return setOffdec(temp1.toString());
+//     })
+// }, [setOffdec])
+//   useEffect(() => {
+//     axiosConfig.get('/offers', headers).then((res) => {
+//       const countOffer = res.data.length;
+//       return setCountoff(countOffer.toString());
+//   })
+// }, [setCountoff])
 
   // render
   return (

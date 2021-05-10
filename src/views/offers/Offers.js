@@ -19,14 +19,14 @@ const Offers = () => {
   const [data, setData] = useState([]);
   const [load, setLoad] = useState(true);
   const token = JSON.parse(sessionStorage.getItem("token"));
-  let headers = {
-      authorization: `Bearer ${token}`,
-    };
+  let config = {
+    headers : { Authorization: `Bearer ${token}` }
+  };
 
     useEffect(() => {
       const getOffers = async () => {
         try {
-          await axiosConfig.get('/offers', headers).then((res) => {
+          await axiosConfig.get('/offers', config).then((res) => {
             setData(res.data);
             setLoad(false);
           })

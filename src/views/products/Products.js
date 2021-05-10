@@ -25,13 +25,13 @@ const Products = () => {
   const [depracatedprod, setDepracatedprod] = useState([]);
   const [load, setLoad] = useState(true);
   const token = JSON.parse(sessionStorage.getItem("token"));
-  let headers = {
-    authorization: `Bearer ${token}`,
+  let config = {
+    headers : { Authorization: `Bearer ${token}` }
   };
 
   const getProducts = async () => {
     try {
-      const products = await axiosConfig.get('/products', headers);
+      const products = await axiosConfig.get('/products', config);
       const data = products.data;
       //filter ongoing
       const ongoing = data.reduce((filter, value) => {
@@ -82,7 +82,7 @@ const Products = () => {
               try {
                 setLoad(true);
                 const fd = {"status": "deprecated"};
-                axiosConfig.patch(`/products/status/${id}`, fd, headers)
+                axiosConfig.patch(`/products/status/${id}`, fd, config)
                 .then(res => {
                   const data = res.data;
                   if (data.status === 201){
@@ -139,7 +139,7 @@ const Products = () => {
           try {
             setLoad(true);
             const fd = {"status": "ongoing"};
-            axiosConfig.patch(`/products/status/${id}`, fd, headers)
+            axiosConfig.patch(`/products/status/${id}`, fd, config)
             .then(res => {
               const data = res.data;
               if (data.status === 201){

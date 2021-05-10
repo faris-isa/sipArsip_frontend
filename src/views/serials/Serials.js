@@ -13,15 +13,15 @@ const Serials = () => {
   const [serials, setSerials] = useState();
   const [load, setLoad] = useState(true);
   const token = JSON.parse(sessionStorage.getItem("token"));
-  let headers = {
-    authorization: `Bearer ${token}`,
+  let config = {
+    headers : { Authorization: `Bearer ${token}` }
   };
 
 
   useEffect(() => {
     const getSerials = async () => {
       try {
-        await axiosConfig.get('/serials', headers)
+        await axiosConfig.get('/serials', config)
         .then((res) => {
           setSerials(res.data)
           setLoad(false);

@@ -11,10 +11,10 @@ const User = ({match}) => {
   const token = JSON.parse(sessionStorage.getItem("token"));
 
   useEffect(() => {
-    let headers = {
-      authorization: `Bearer ${token}`,
+    let config = {
+      headers : { Authorization: `Bearer ${token}` }
     };
-    axiosConfig.get(`/users/${id}`, headers).then((res) => {
+    axiosConfig.get(`/users/${id}`, config).then((res) => {
         const data = res.data;
         setUser(data);
     })

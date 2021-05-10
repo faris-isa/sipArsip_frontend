@@ -52,7 +52,7 @@ const Dashboard = () => {
       const setDate = {tanggal: tanggal, bulan: month+1, tahun: year};
       try {
         let config = {
-          headers : { authorization: `Bearer ${token}` }
+          headers : { Authorization: `Bearer ${token}` }
         };
         await axiosConfig.post('/monthly', setDate, config).then((res) => {
           setCountdata(res.data)
@@ -68,11 +68,11 @@ const Dashboard = () => {
 
   const handleDownload = (event) => {
     try {
-      let headers = {
+      let config = { headers : {
         responseType: 'blob',
-        authorization: `Bearer ${token}`,
-      };
-      axiosConfig.get(`/graphs/export`, headers)
+        Authorization: `Bearer ${token}`,
+      }};
+      axiosConfig.get(`/graphs/export`, config)
       .then((res) => {
         FileDownload(res.data, `grafik.docx` );
       });

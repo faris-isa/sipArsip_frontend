@@ -10,12 +10,15 @@ import Header from '../.components/CardHeader';
 
 const AddOffers = () => {
   const [product, setProduct] = useState([]);
-  // const [data, setData] = useState("")
+  const token = JSON.parse(sessionStorage.getItem("token"));
+  let config = {
+    headers : { Authorization: `Bearer ${token}` }
+  };
 
 
   const getProducts = async () => {
     try {
-      const products = await axiosConfig.get('/products');
+      const products = await axiosConfig.get('/products', config);
       const data = products.data;
       setProduct(data);
 

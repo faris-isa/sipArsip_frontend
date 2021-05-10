@@ -15,8 +15,8 @@ const EditProduct = ({match}) => {
   const [load, setLoad] = useState(true);
   const [value, setValue] = useState("");
   const token = JSON.parse(sessionStorage.getItem("token"));
-  let headers = {
-    authorization: `Bearer ${token}`,
+  let config = {
+    headers : { Authorization: `Bearer ${token}` }
   };
   const history = useHistory();
 
@@ -25,13 +25,13 @@ const EditProduct = ({match}) => {
   useEffect(() => {
     const getManufactures = async () => {
       try {
-        await axiosConfig.get('/manufactures', headers).then((res) => {
+        await axiosConfig.get('/manufactures', config).then((res) => {
           setManufactures(res.data);
         })
-        await axiosConfig.get('/types', headers).then((res) => {
+        await axiosConfig.get('/types', config).then((res) => {
           setTypes(res.data);
         })
-        await axiosConfig.get(`/products/${id}`, headers).then((res) => {
+        await axiosConfig.get(`/products/${id}`, config).then((res) => {
           setTemp(res.data);
           setLoad(false);
         })
@@ -61,7 +61,7 @@ const EditProduct = ({match}) => {
     fd.append('spesifikasi', value.spesifikasi);
 
     try {
-      await axiosConfig.post(`/products/${id}?_method=PATCH`, fd, headers)
+      await axiosConfig.post(`/products/${id}?_method=PATCH`, fd, config)
       // await axiosConfig.patch(`/products/${id}`, fd, headers)
       .then(res => {
         const data = res.data;

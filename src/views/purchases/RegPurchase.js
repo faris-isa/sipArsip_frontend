@@ -27,17 +27,17 @@ const RegPurchase = ({match}) => {
   const [form, setForm] = useState([]);
   const [isloading, setIsloading] = useState(true);
   const token = JSON.parse(sessionStorage.getItem("token"));
-  let headers = {
-    authorization: `Bearer ${token}`,
+  let config = {
+    headers : { Authorization: `Bearer ${token}` }
   };
 
   useEffect(() => {
     const getPurchase = async () => {
       try {
-        await axiosConfig.get(`/offers/${id}`, headers).then((res) => {
+        await axiosConfig.get(`/offers/${id}`, config).then((res) => {
           setPurchdata(res.data);
         })
-        await axiosConfig.get(`/locations`, headers).then((res) => {
+        await axiosConfig.get(`/locations`, config).then((res) => {
           setLocation(res.data);
           setAddserial(false);
           setIsloading(false);
@@ -67,7 +67,7 @@ const RegPurchase = ({match}) => {
     const addPurchase = {purchase_id: purchdata.purchase[0].id, purchase_detail: strdetail}
 
     try {
-      await axiosConfig.post('/purchases', addPurchase, headers)
+      await axiosConfig.post('/purchases', addPurchase, config)
       .then(res => {
         const data = res.data;
         if (data.status === 201){

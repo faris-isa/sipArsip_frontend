@@ -19,14 +19,14 @@ const ListRegPurchases = () => {
   const [data, setData] = useState([]);
   const [load, setLoad] = useState(true);
   const token = JSON.parse(sessionStorage.getItem("token"));
-  let headers = {
-    authorization: `Bearer ${token}`,
+  let config = {
+    headers : { Authorization: `Bearer ${token}` }
   };
 
   useEffect(() => {
     const getPur = async () => {
       try {
-        await axiosConfig.get('/purchases', headers).then((res) => {
+        await axiosConfig.get('/purchases', config).then((res) => {
           const temp = res.data;
           const belum = temp.reduce((filter, value) => {
             if (value.status === "belum") {

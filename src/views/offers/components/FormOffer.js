@@ -33,9 +33,9 @@ const FormOffer = (props) => {
   const history = useHistory();
   const [isloading, setIsloading] = useState(false);
   const token = JSON.parse(sessionStorage.getItem("token"));
-  let headers = {
-      authorization: `Bearer ${token}`,
-    };
+  let config = {
+    headers : { Authorization: `Bearer ${token}` }
+  };
 
   useEffect(() => {
     sumSubTotal()
@@ -95,7 +95,7 @@ const FormOffer = (props) => {
 
     const addOffer = {nama_pembeli: nama, harga_total: hargatotal, detail_produk: strdetail}
     try {
-      await axiosConfig.post('/offers', addOffer, headers)
+      await axiosConfig.post('/offers', addOffer, config)
       .then(res => {
         const data = res.data;
         if (data.status === 201){

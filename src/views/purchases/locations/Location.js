@@ -19,12 +19,12 @@ const Location = ({match}) => {
 
 
   useEffect(() => {
-    let headers = {
-      authorization: `Bearer ${token}`,
+    let config = {
+      headers : { Authorization: `Bearer ${token}` }
     };
     const getType = async () => {
       try {
-        await axiosConfig.get(`/locations/${id}`, headers).then(res => {
+        await axiosConfig.get(`/locations/${id}`, config).then(res => {
           setData(res.data);
           setIsload(false);
         })

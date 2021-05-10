@@ -34,13 +34,13 @@ const Form = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let headers = {
-      authorization: `Bearer ${token}`,
+    let config = {
+      headers : { Authorization: `Bearer ${token}` }
     };
     setIsloading(true);
     const addUserVal = {name, username, password, role};
     try {
-      await axiosConfig.post('/users', addUserVal, headers)
+      await axiosConfig.post('/users', addUserVal, config)
       .then(res => {
         const data = res.data;
         if (data.status === 201){

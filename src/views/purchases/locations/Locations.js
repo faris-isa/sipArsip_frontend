@@ -17,12 +17,12 @@ const Locations = () => {
   const token = JSON.parse(sessionStorage.getItem("token"));
 
   useEffect(() => {
-    let headers = {
-      authorization: `Bearer ${token}`,
+    let config = {
+      headers : { Authorization: `Bearer ${token}` }
     };
     const getData = async () => {
       try {
-        await axiosConfig.get('/locations', headers).then((res) => {
+        await axiosConfig.get('/locations', config).then((res) => {
           setDatas(res.data);
           setLoad(false);
         })
@@ -35,8 +35,8 @@ const Locations = () => {
   }, [setDatas]);
 
   const handleDelete = (id) => {
-    let headers = {
-      authorization: `Bearer ${token}`,
+    let config = {
+      headers : { Authorization: `Bearer ${token}` }
     };
     const getAlert = () => {
       Swal.fire({
@@ -51,7 +51,7 @@ const Locations = () => {
             if (result.isConfirmed) {
               try {
                 setLoad(true);
-                axiosConfig.delete(`/locations/${id}`, headers)
+                axiosConfig.delete(`/locations/${id}`, config)
                 .then(res => {
                   if (res.status === 200){
                     Swal.fire({

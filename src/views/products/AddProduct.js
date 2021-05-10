@@ -14,8 +14,8 @@ const AddProduct = () => {
   const [load, setLoad] = useState(true);
   const [value, setValue] = useState("");
   const token = JSON.parse(sessionStorage.getItem("token"));
-  let headers = {
-    authorization: `Bearer ${token}`,
+  let config = {
+    headers : { Authorization: `Bearer ${token}` }
   };
   const history = useHistory();
 
@@ -33,10 +33,10 @@ const AddProduct = () => {
   useEffect(() => {
     const getManufactures = async () => {
       try {
-        await axiosConfig.get('/manufactures', headers).then((res) => {
+        await axiosConfig.get('/manufactures', config).then((res) => {
           setManufactures(res.data);
         })
-        await axiosConfig.get('/types', headers).then((res) => {
+        await axiosConfig.get('/types', config).then((res) => {
           setTypes(res.data);
           setLoad(false);
         })
@@ -66,7 +66,7 @@ const AddProduct = () => {
     fd.append('spesifikasi', value.spesifikasi);
 
     try {
-      await axiosConfig.post('/products', fd, headers)
+      await axiosConfig.post('/products', fd, config)
       .then(res => {
         const data = res.data;
         if (data.status === 201){

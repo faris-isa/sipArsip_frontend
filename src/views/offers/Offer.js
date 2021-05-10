@@ -25,11 +25,11 @@ const Offer = ({match}) => {
 
   useEffect(() => {
     const getOffer = async () => {
-      let headers = {
-          authorization: `Bearer ${token}`,
-        };
+      let config = {
+        headers : { Authorization: `Bearer ${token}` }
+      };
       try {
-        await axiosConfig.get(`/offers/${id}`, headers)
+        await axiosConfig.get(`/offers/${id}`, config)
         .then((res) => {
           setOfferdata(res.data);
           setIsload(false);
@@ -45,11 +45,11 @@ const Offer = ({match}) => {
 
   const handleDownload = (id, nama_pembeli) => {
     try {
-      let headers = {
+      let config = { headers : {
         responseType: 'blob',
-        authorization: `Bearer ${token}`,
-      };
-      axiosConfig.get(`/offers/export/${id}`, headers)
+        Authorization: `Bearer ${token}`,
+      }};
+      axiosConfig.get(`/offers/export/${id}`, config)
       .then((res) => {
         FileDownload(res.data, `${nama_pembeli}.docx` );
       });

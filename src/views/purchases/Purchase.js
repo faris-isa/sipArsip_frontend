@@ -41,14 +41,14 @@ const Purchase = ({match}) => {
   });
   const [isload, setIsload] = useState(true);
   const token = JSON.parse(sessionStorage.getItem("token"));
-  let headers = {
-    authorization: `Bearer ${token}`,
+  let config = {
+    headers : { Authorization: `Bearer ${token}` }
   };
 
   useEffect(() => {
     const getPurchase = async () => {
       try {
-        await axiosConfig.get(`/purchases/${id}`, headers).then((res) => {
+        await axiosConfig.get(`/purchases/${id}`, config).then((res) => {
           setPurchasedata(res.data);
           setIsload(false)
         })

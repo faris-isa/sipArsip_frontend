@@ -17,11 +17,11 @@ const Users = () => {
   const token = JSON.parse(sessionStorage.getItem("token"));
 
   const getUsers = async () => {
-    let headers = {
-      authorization: `Bearer ${token}`,
+    let config = {
+      headers : { Authorization: `Bearer ${token}` }
     };
     try {
-      await axiosConfig.get('/users', headers).then((res) => {
+      await axiosConfig.get('/users', config).then((res) => {
         setUsersdata(res.data)
         setLoad(false);
       })

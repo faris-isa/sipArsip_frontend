@@ -17,12 +17,12 @@ const Manufactures = () => {
   const token = JSON.parse(sessionStorage.getItem("token"));
 
   useEffect(() => {
-    let headers = {
-      authorization: `Bearer ${token}`,
+    let config = {
+      headers : { Authorization: `Bearer ${token}` }
     };
     const getData = async () => {
       try {
-        await axiosConfig.get('/manufactures', headers)
+        await axiosConfig.get('/manufactures', config)
         .then((res) => {
           setData(res.data);
           setLoad(false);

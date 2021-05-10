@@ -18,12 +18,12 @@ const Type = ({match}) => {
 
 
   useEffect(() => {
-    let headers = {
-      authorization: `Bearer ${token}`,
+    let config = {
+      headers : { Authorization: `Bearer ${token}` }
     };
     const getType = async () => {
       try {
-        await axiosConfig.get(`/types/${id}`, headers).then(res => {
+        await axiosConfig.get(`/types/${id}`, config).then(res => {
           setType(res.data);
           setIsload(false);
         })
