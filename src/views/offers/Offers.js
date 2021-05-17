@@ -18,6 +18,23 @@ import TableOffers from './components/TableOffers';
 const Offers = () => {
   const [data, setData] = useState([]);
   const [load, setLoad] = useState(true);
+
+  //info
+  const [isload, setIsload] = useState(true);
+  const [statusinfo, setStatusinfo] = useState(false);
+  const [info, setInfo] = useState({
+    created_at: "",
+    updated_at: "",
+    purchase: [{
+      pivot: {
+        created_at: "",
+        purchased_at: "",
+        done_at: "",
+      }
+    }]
+  });
+
+  //headers
   const token = JSON.parse(sessionStorage.getItem("token"));
   let config = {
     headers : { Authorization: `Bearer ${token}` }
@@ -37,13 +54,25 @@ const Offers = () => {
     getOffers();
   }, [setData]);
 
+  const handlerStat = (id) => {
+    setStatusinfo(!statusinfo);
+    if (Number.isInteger(id)){
+      axiosConfig.get(`/offers/${id}`, config).then((res) => {
+        setInfo(res.data);
+        setIsload(false);
+      })
+    } else {
+      setIsload(true);
+    }
+};
+
   return (
     <>
       <CCard>
           <CardHeader title="Daftar Penawaran" type="tambah" link="/penawaran/tambah"/>
           {/* <CardHeader title="Penawaran"/> */}
         <CCardBody>
-          <TableOffers offers={data} load={load}/>
+          <TableOffers offers={data} load={load} info={handlerStat} statusinfo={statusinfo} loadstatus={isload} infodata={info}/>
         </CCardBody>
       </CCard>
     </>

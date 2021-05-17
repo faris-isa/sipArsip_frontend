@@ -10,7 +10,6 @@ import {
 import Swal from 'sweetalert2';
 import axiosConfig from '../../api/axios';
 import TableStat from './components/TableStat';
-import { TheHeaderDropdownMssg } from 'src/containers';
 
 const OffersAcc = () => {
   const FileDownload = require('js-file-download');
@@ -110,7 +109,7 @@ const OffersAcc = () => {
               try {
                 setLoad(true);
                 const fd = {status: "decline", status_offpur: "selesai"};
-                axiosConfig.patch(`/offers/status/${id}`, fd, config)
+                axiosConfig.post(`/offer-status/${id}`, fd, config)
                 .then(res => {
                   const data = res.data;
                   if (data.status === 201){
